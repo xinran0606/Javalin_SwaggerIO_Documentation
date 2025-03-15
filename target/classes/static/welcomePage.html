@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produkt-API</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    h1 {
+        color: #333;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    .api-link {
+        display: block;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f4f4f4;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+    }
+    .api-link:hover {
+        background-color: #e4e4e4;
+    }
+  </style>
+</head>
+<body>
+<h1>Willkommen zur Produkt-API</h1>
+<p>
+  Dies ist eine einfache RESTful API zur Verwaltung von Produkten.
+  Die API verwendet Javalin als Web-Framework und MongoDB als Datenbank.
+</p>
+
+<h2>API-Dokumentation</h2>
+<p>
+  Die vollständige API-Dokumentation ist über Swagger UI verfügbar:
+</p>
+<a href="/swagger-ui" class="api-link">Swagger UI öffnen</a>
+
+<h2>Verfügbare Endpunkte</h2>
+<ul>
+  <li>GET /api/products - Alle Produkte abrufen</li>
+  <li>GET /api/products/{id} - Produkt nach ID abrufen</li>
+  <li>POST /api/products - Neues Produkt erstellen</li>
+  <li>PUT /api/products/{id} - Produkt aktualisieren</li>
+  <li>DELETE /api/products/{id} - Produkt löschen</li>
+</ul>
+
+<h2>Produkte anzeigen</h2>
+<p>
+  Klicken Sie auf den folgenden Link, um alle Produkte anzuzeigen:
+</p>
+<a href="/products/view" class="api-link">Produkte anzeigen</a>
+</body>
+</html>

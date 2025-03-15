@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.example</groupId>
+  <artifactId>RESTful_SwaggerIO_Documentation</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>RESTful_SwaggerIO_Documentation</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <!-- Javalin - Web Framework -->
+    <dependency>
+      <groupId>io.javalin</groupId>
+      <artifactId>javalin</artifactId>
+      <version>5.6.1</version>
+    </dependency>
+
+    <!-- Logging für Javalin -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.7</version>
+    </dependency>
+
+    <!-- MongoDB Java Driver -->
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>4.10.2</version>
+    </dependency>
+
+    <!-- Jackson für JSON-Verarbeitung -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.2</version>
+    </dependency>
+
+    <!-- Swagger/OpenAPI für Javalin -->
+    <dependency>
+      <groupId>io.javalin.community.openapi</groupId>
+      <artifactId>javalin-openapi-plugin</artifactId>
+      <version>5.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.javalin.community.openapi</groupId>
+      <artifactId>javalin-swagger-plugin</artifactId>
+      <version>5.6.1</version>
+    </dependency>
+
+    <!-- Freemarker für Template Rendering -->
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.32</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/io.javalin/javalin-openapi -->
+    <dependency>
+      <groupId>io.javalin</groupId>
+      <artifactId>javalin-openapi</artifactId>
+      <version>4.6.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-core</artifactId>
+      <version>2.2.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.2.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.15.2</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
