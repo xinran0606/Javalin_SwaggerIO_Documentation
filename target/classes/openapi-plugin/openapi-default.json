@@ -1,0 +1,195 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "paths": {
+    "/api/products": {
+      "post": {
+        "tags": [
+          "Produkte"
+        ],
+        "summary": "Neues Produkt erstellen",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "description": "Produkt hinzugefügt"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": [
+          "Produkte"
+        ],
+        "summary": "Produkt nach ID abrufen",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Die ID des Produkts",
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Das Produkt mit der angegebenen ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produkt nicht gefunden"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
+      "put": {
+        "tags": [
+          "Produkte"
+        ],
+        "summary": "Produkt aktualisieren",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Die ID des zu aktualisierenden Produkts",
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "Produkt aktualisiert"
+          },
+          "404": {
+            "description": "Produkt nicht gefunden"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      },
+      "delete": {
+        "tags": [
+          "Produkte"
+        ],
+        "summary": "Produkt löschen",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Die ID des zu löschenden Produkts",
+            "required": false,
+            "deprecated": false,
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produkt gelöscht"
+          },
+          "404": {
+            "description": "Produkt nicht gefunden"
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "Produkte"
+        ],
+        "summary": "Alle Produkte abrufen",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Eine Liste aller Produkte",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  }
+}
