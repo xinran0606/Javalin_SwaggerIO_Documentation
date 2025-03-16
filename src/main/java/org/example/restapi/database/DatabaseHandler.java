@@ -13,6 +13,7 @@ public class DatabaseHandler {
     public DatabaseHandler() {
         // 添加示例产品
         insertSampleProducts();
+
     }
 
     private void insertSampleProducts() {

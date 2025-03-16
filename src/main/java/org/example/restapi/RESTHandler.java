@@ -1,17 +1,18 @@
 package org.example.restapi;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
-import io.javalin.openapi.HttpMethod;
-import io.javalin.openapi.OpenApi;
-import io.javalin.openapi.OpenApiContent;
-import io.javalin.openapi.OpenApiParam;
-import io.javalin.openapi.OpenApiRequestBody;
-import io.javalin.openapi.OpenApiResponse;
+import io.javalin.openapi.*;
+
+import io.javalin.openapi.plugin.OpenApiConfiguration;
 import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.OpenApiPluginConfiguration;
 import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
+import static io.javalin.apibuilder.ApiBuilder.*;
+
+
 import org.example.restapi.database.DatabaseHandler;
 import org.example.restapi.models.Product;
 
@@ -27,6 +28,7 @@ public class RESTHandler {
 
     public static void main(String[] args) throws IOException {
         new RESTHandler(new DatabaseHandler());
+
     }
 
     public RESTHandler(DatabaseHandler dbHandler) throws IOException {
@@ -42,39 +44,71 @@ public class RESTHandler {
         }
 
         int localPort = Integer.parseInt(properties.getProperty("server.port", "8080"));
-        start(localPort);
+        this.start(localPort);
     }
 
     private void start(int port) {
         // Javalin-App erstellen und konfigurieren
         app = Javalin.create(config -> {
             // OpenAPI-Plugin konfigurieren
-            OpenApiPluginConfiguration openApiConfig = new OpenApiPluginConfiguration()
-                    .withDocumentationPath("/swagger-docs")
-                    .withDefinitionConfiguration((version, definition) -> {
-                        definition.withOpenApiInfo((openApiInfo) -> {
-                            openApiInfo.setTitle("Produkt-API");
-                            openApiInfo.setVersion("1.0");
-                            openApiInfo.setDescription("RESTful API für die Verwaltung von Produkten");
-                        });
-                    });
+            String docPath = "/swagger-docs";
 
-            // OpenAPI und Swagger Plugins registrieren
-            config.plugins.register(new OpenApiPlugin(openApiConfig));
-            SwaggerConfiguration swaggerConfig = new SwaggerConfiguration();
-            swaggerConfig.setDocumentationPath("/swagger-docs"); // 必须与OpenApiPluginConfiguration中的路径匹配
-            swaggerConfig.setUiPath("/swagger-ui"); // 定义Swagger UI的访问路径
-            swaggerConfig.setTitle("Produkt-API");
-            config.plugins.register(new SwaggerPlugin(swaggerConfig));
+            OpenApiContact openApiContact = new OpenApiContact();
+            openApiContact.setName("Xinran");
+            openApiContact.setEmail("AbramiHS@yahoo.com");
+            openApiContact.setUrl("https://www.example.com/support");
 
-            // Statische Dateien konfigurieren
-            config.staticFiles.add(staticFileConfig -> {
-                staticFileConfig.directory = "./src/main/resources/static";
-                staticFileConfig.location = Location.EXTERNAL;
+            OpenApiLicense openApiLicense = new OpenApiLicense();
+            openApiLicense.setName("Apache 2.0");
+            openApiLicense.setIdentifier("Apache-2.0");
+
+            OpenApiInfo openApiInfo = new OpenApiInfo();
+            openApiInfo.setTitle("Awesome App");
+            openApiInfo.setSummary("Absolutely awesome app, love it");
+            openApiInfo.setDescription("App that alloes you to buy stuff");
+            openApiInfo.setContact(openApiContact);
+            openApiInfo.setLicense(openApiLicense);
+            openApiInfo.setVersion("1.0.0");
+
+            OpenApiServerVariable openApiServerVariable = new OpenApiServerVariable();
+            openApiServerVariable.setValues(new String[] {"7070", "8080"});
+            openApiServerVariable.setDefault("8080");
+            openApiServerVariable.setDescription("Port of the server");
+
+            OpenApiServerVariable basePathServerVariable = new OpenApiServerVariable();
+            basePathServerVariable.setValues(new String[] { "v1" });
+            basePathServerVariable.setDefault("v1");
+            basePathServerVariable.setDescription("Base path of the server");
+
+            OpenApiServer openApiServer = new OpenApiServer();
+            openApiServer.setUrl("https://example.com:{port}/{basePath}");
+            openApiServer.setDescription("Description of the server ig, who cares.");
+            openApiServer.addVariable("port", openApiServerVariable);
+            openApiServer.addVariable("basePath", basePathServerVariable);
+
+            OpenApiServer[] servers = new OpenApiServer[] { openApiServer };
+
+            OpenApiConfiguration openApiConfiguration = new OpenApiConfiguration();
+            openApiConfiguration.setInfo(openApiInfo);
+            openApiConfiguration.setServers(servers);
+            openApiConfiguration.setDocumentationPath(docPath);
+
+            // Security comes here, aber first lets see if we can do it without it
+            openApiConfiguration.setDocumentProcessor(docs -> {
+            docs.set("test", new TextNode("Value"));
+            return docs.toPrettyString();
             });
-        }).start(port);
 
-        System.out.println("Server gestartet auf http://localhost:" + port);
+            config.plugins.register(new OpenApiPlugin(openApiConfiguration));
+            SwaggerConfiguration swaggerConfiguration = new SwaggerConfiguration();
+            swaggerConfiguration.setDocumentationPath(docPath);
+            swaggerConfiguration.setUiPath("/swagger-ui");
+            config.plugins.register(new SwaggerPlugin(swaggerConfiguration));
+
+        })
+                .start(8080);
+
+
 
         // Routen definieren
         defineRoutes();
@@ -84,7 +118,7 @@ public class RESTHandler {
         // Startseite
         app.get("/", ctx -> {
             StringBuilder html = new StringBuilder();
-            html.append("<!DOCTYPE html><html><head><title>Produkt-API</title>");
+            html.append("<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Produkt-API</title>");
             html.append("<style>body{font-family:Arial;max-width:800px;margin:0 auto;padding:20px;}");
             html.append("h1{color:#333;border-bottom:1px solid #eee;padding-bottom:10px;}");
             html.append(".api-link{display:block;margin:10px 0;padding:10px;background-color:#f4f4f4;");
@@ -123,8 +157,8 @@ public class RESTHandler {
     }
 
     @OpenApi(
-            path = "/api/products",
-            methods = {HttpMethod.GET},
+            path = "/products",
+            methods = HttpMethod.GET,
             summary = "Alle Produkte abrufen",
             tags = {"Produkte"},
             responses = {
@@ -132,7 +166,7 @@ public class RESTHandler {
             }
     )
     private void getAllProducts() {
-        app.get("/api/products", ctx -> {
+        app.get("/products", ctx -> {
             ctx.json(dbHandler.getAllProducts());
         });
     }
@@ -141,7 +175,7 @@ public class RESTHandler {
             path = "/api/products/{id}",
             methods = {HttpMethod.GET},
             summary = "Produkt nach ID abrufen",
-            description = "Hallloooo",
+
             tags = {"Produkte"},
             pathParams = {
                     @OpenApiParam(name = "id", description = "Die ID des Produkts")
@@ -152,7 +186,7 @@ public class RESTHandler {
             }
     )
     private void getProductById() {
-        app.get("/api/products/{id}", ctx -> {
+        this.app.get("/api/products/{id}", ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Product product = dbHandler.getProductById(id);
             if (product != null) {
@@ -167,7 +201,7 @@ public class RESTHandler {
             path = "/api/products",
             methods = {HttpMethod.POST},
             summary = "Neues Produkt erstellen",
-            description = "Hallloooo",
+
             tags = {"Produkte"},
             requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Product.class)}),
             responses = {
@@ -175,7 +209,7 @@ public class RESTHandler {
             }
     )
     private void createProduct() {
-        app.post("/api/products", ctx -> {
+        this.app.post("/api/products", ctx -> {
             Product newProduct = ctx.bodyAsClass(Product.class);
             dbHandler.insertProduct(newProduct);
             ctx.status(201).result("Produkt hinzugefügt");
@@ -186,7 +220,7 @@ public class RESTHandler {
             path = "/api/products/{id}",
             methods = {HttpMethod.PUT},
             summary = "Produkt aktualisieren",
-            description = "Hallloooo",
+
             tags = {"Produkte"},
             pathParams = {
                     @OpenApiParam(name = "id", description = "Die ID des zu aktualisierenden Produkts")
@@ -198,7 +232,7 @@ public class RESTHandler {
             }
     )
     private void updateProduct() {
-        app.put("/api/products/{id}", ctx -> {
+        this.app.put("/api/products/{id}", ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             Product updatedProduct = ctx.bodyAsClass(Product.class);
             updatedProduct.setId(id);
@@ -215,7 +249,7 @@ public class RESTHandler {
             path = "/api/products/{id}",
             methods = {HttpMethod.DELETE},
             summary = "Produkt löschen",
-            description = "Hallloooo",
+
             tags = {"Produkte"},
             pathParams = {
                     @OpenApiParam(name = "id", description = "Die ID des zu löschenden Produkts")
@@ -226,7 +260,7 @@ public class RESTHandler {
             }
     )
     private void deleteProduct() {
-        app.delete("/api/products/{id}", ctx -> {
+        this.app.delete("/api/products/{id}", ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
             boolean deleted = dbHandler.deleteProduct(id);
             if (deleted) {
@@ -239,7 +273,7 @@ public class RESTHandler {
 
     // HTML-Ansicht für Produktliste (keine OpenAPI-Dokumentation nötig)
     private void productListView() {
-        app.get("/products/view", ctx -> {
+        this.app.get("/products/view", ctx -> {
             StringBuilder html = new StringBuilder();
             html.append("<!DOCTYPE html><html><head><title>Produktliste</title>");
             html.append("<style>body{font-family:Arial;max-width:800px;margin:0 auto;padding:20px;}");
